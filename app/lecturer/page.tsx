@@ -28,7 +28,7 @@ function LecturerPageContent() {
   useEffect(() => {
     if (typeof window === "undefined") return // SSR safety
   
-    let timeout = setTimeout(() => {
+    const timeout = setTimeout(() => {
       if (!isConnected) {
         console.log("Wallet not connected, redirecting to /")
         router.push("/")
@@ -91,8 +91,8 @@ function LecturerPageContent() {
       }
 
       // Extract student addresses and grades
-      const studentAddresses = parsedData.map((item: any) => item.studentAddress)
-      const grades = parsedData.map((item: any) => item.grade)
+      const studentAddresses = parsedData.map((item) => item.studentAddress)
+      const grades = parsedData.map((item) => item.grade)
 
       await submitBulkResults(provider, bulkCourseId, studentAddresses, grades)
 

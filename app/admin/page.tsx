@@ -41,7 +41,7 @@ function AdminPageContent() {
   useEffect(() => {
     if (typeof window === "undefined") return // SSR safety
   
-    let timeout = setTimeout(() => {
+    const timeout = setTimeout(() => {
       if (!isConnected) {
         console.log("Wallet not connected, redirecting to /")
         router.push("/")
