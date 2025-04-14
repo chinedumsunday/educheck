@@ -1,6 +1,14 @@
-import { BrowserProvider, Contract, JsonRpcSigner, EventLog } from "ethers"
+import { BrowserProvider, Contract, JsonRpcProvider, JsonRpcSigner, EventLog } from "ethers"
 import { contractABI, contractAddress } from "./contract"
 import { getEthereumProviderFromPrivy } from "./privy-helpers"
+
+// 👇 Add your OP Sepolia RPC URL here (e.g. Alchemy or Infura)
+const RPC_URL = "https://optimism-sepolia.infura.io/v3/812b4184726343898890a3f4d3ecd49c"
+
+const getStaticProvider = () => {
+  if (!RPC_URL) throw new Error("Missing RPC URL")
+  return new JsonRpcProvider(RPC_URL)
+}
 
 export const getProviderFromPrivy = async (walletClient: any): Promise<BrowserProvider> => {
   return await getEthereumProviderFromPrivy(walletClient)
@@ -98,9 +106,8 @@ export const validateResult = async (
 
 export const getAllUnvalidatedResults = async (walletClient: any) => {
   try {
-    const provider = await getProviderFromPrivy(walletClient)
-    const signer = await provider.getSigner()
-    const contract = getContract(signer)
+    const readProvider = getStaticProvider()
+    const contract = new Contract(contractAddress, contractABI, readProvider)
 
     const submittedEvents = await contract.queryFilter(contract.filters.ResultSubmitted())
     const validatedEvents = await contract.queryFilter(contract.filters.ResultValidated())
