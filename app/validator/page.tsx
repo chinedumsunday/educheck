@@ -17,11 +17,17 @@ function ValidatorPageContent() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!isConnected) {
-      router.push("/")
-    }
+    if (typeof window === "undefined") return // SSR safety
+  
+    const timeout = setTimeout(() => {
+      if (!isConnected) {
+        console.log("Wallet not connected, redirecting to /")
+        router.push("/")
+      }
+    }, 500) // Give it 500ms for hydration and wallet restore
+  
+    return () => clearTimeout(timeout)
   }, [isConnected, router])
-
   useEffect(() => {
     const fetchUnvalidatedResults = async () => {
       if (!provider) return
